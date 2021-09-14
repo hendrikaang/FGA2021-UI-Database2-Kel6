@@ -36,7 +36,7 @@ CREATE TABLE table_name
   ……[ ] )
 ```
 Pada ERD perusahaan ritel minimarket, terdapat 11 entitas yang saling berhubungan, sehingga dibutuhkan 11 tabel pada implementasi program. Berikut adalah gambar ERD yang akan diimplementasikan.
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![ERD image](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6/blob/main/ERD.PNG)
 
 Berikut ini merupakan kode yang digunakan untuk membuat tabel yang dibutuhkan untuk mengimplementasikan ERD di atas.
 #### Membuat tabel r_locations
@@ -339,7 +339,7 @@ CREATE [OR REPLACE] [FORCE|NOFORCE] VIEW view_name [(alias[,alias...])] AS subqu
 ```
 
 Berikut adalah salah satu contoh penggunaan view. View di bawah ini digunakan untuk menampilkan nama toko, daftar produk, stok, tanggal kedaluarsa, dan supplier produk-produk yang stoknya tinggal sedikit atau produk yang akan segera kedaluarsa.
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![Image of view-1](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6/blob/main/view-1.png)
 ```sql
 CREATE OR REPLACE VIEW view_warehouse_problem
 	AS SELECT s.store_name AS "Toko", 
@@ -523,4 +523,5 @@ Test Num | Date | Test Description | Input | Expected Output | Result
 6 | 12/09/2021 | Display view view_warehouse_problem | SELECT * from view_warehouse_problem | View view_warehouse_problem | View view_warehouse_problem displayed
 7 | 12/09/2021 | Display discount history information by using index discount_histories | select * from all_indexes where table_name = 'r_discount_histories' ; | discount history information | discount history information
 
-
+### Source Code
+Seluruh script *Minimarket database* untuk ORACLE database tersedia [di sini](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6/blob/main/DPproject.sql)
