@@ -4,7 +4,18 @@
 - Hendrika Anggriawan
 - Dio Tri Ananda
 
-## Minimarket Database
+#### Table of content:
+* [Pendahuluan](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#pendahuluan)
+* [1. Create Tables](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#1-create-tables#1-create-tables)
+* [2. Create Constraints](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#2-create-constraints)
+* [3. Create Views](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#3-create-views)
+* [4. Create Sequences](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#4-create-sequences)
+* [5. Add Data to Tables](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#5-add-data-to-tables)
+* [6. Create Indexes](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#6-create-indexes)
+* [7. Create Synonyms](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#7-create-synonyms)
+* [8. Test The Database](https://github.com/hendrikaang/FGA2021-UI-Database2-Kel6#8-test-database)
+
+## Pendahuluan
 Bagi perusahaan atau organisasi, keberadaan database (basis data) memiliki fungsi dan peran penting dalam mendukung proses bisnis agar lebih efektif dan efisien. Sebab, database merupakan salah satu komponen utama dalam sistem informasi, yang merupakan dasar dalam menyediakan suatu informasi bagi para pemakai (user).
 
 Secara sederhana, database dapat diartikan sebagai kumpulan berbagai data dan informasi yang tersimpan dan tersusun di dalam komputer secara sistematik yang dapat diperiksa, diolah dengan menggunakan program komputer untuk mendapatkan informasi dari database tersebut. Perangkat lunak yang digunakan untuk mengelola dan memanggil database disebut dengan sistem Database Management System (DBMS).
@@ -506,5 +517,10 @@ CREATE SYNONYM  spr_seq FOR supplier_id_sed;
 Test Num | Date | Test Description | Input | Expected Output | Result
 -------- | ---- | ---------------- | ----- | --------------- | ------
 1 | 12/09/2021 | Confirm NOT NULL constraint on postal_code in r_locations | INSERT INTO r_locations (postal_code, district, regency, province) VALUES (NULL, 'Bogor Utara', 'Kota Bogor', 'Jawa Barat'); | Cannot insert NULL | ORA-01400: cannot insert NULL into ("ID_A848_SQL_S02"."R_LOCATIONS"."POSTAL_CODE
-2 | 12/09/2021 | Confirm PRIMARY KEY constraint on EMPLOYEE_ID in EMPLOYEES table where data value  must be unique and not null | INSERT INTO EMPLOYEES (EMPLOYEE_id) VALUES(NULL) \n INSERT INTO EMPLOYEES(EMPLOYEE_id) VALUES(‘JB01’) | Cannot insert NULL and non-uniqe value | ORA-01400: cannot insert NULL into ("ID_A848_SQL_S02"."EMPLOYEES"."EMPLOYEE_ID") \n ORA-00001:     	unique constraint (ID_A848_SQL_S02.EMPLOYEE_ID_PK) violated
+2 | 12/09/2021 | Confirm PRIMARY KEY constraint on EMPLOYEE_ID in EMPLOYEES table where data value  must be unique and not null | INSERT INTO EMPLOYEES (EMPLOYEE_id) VALUES(NULL) \n INSERT INTO EMPLOYEES(EMPLOYEE_id) VALUES(‘JB01’) | Cannot insert NULL and non-uniqe value | ORA-01400: cannot insert NULL into ("ID_A848_SQL_S02"."EMPLOYEES"."EMPLOYEE_ID") \n ORA-00001: unique constraint (ID_A848_SQL_S02.EMPLOYEE_ID_PK) violated
+3 | 12/09/2021 | Confirm  FOREIGN KEY constraint using ON DELETE CASCADE option on postal_code in STORE tabl from postal_code as parent table | DELETE FROM postal_code WHERE postal_code='OX9 9ZB' | Deleted province province_id value in the postal code is also deleted in STORES table are deleted | postal_code= 'OX9 9ZB' deletd in STORES table
+4 | 12/09/2021 | Display PRODUCTS information |  SELECT  * from ITEMS  \n   SELECT * from SUPPLIES | item product  \n  information displayed, supplies product information displayed | item product information displayed  \n  supplie product information displayed
+6 | 12/09/2021 | Display view view_warehouse_problem | SELECT * from view_warehouse_problem | View view_warehouse_problem | View view_warehouse_problem displayed
+7 | 12/09/2021 | Display discount history information by using index discount_histories | select * from all_indexes where table_name = 'r_discount_histories' ; | discount history information | discount history information
+
 
