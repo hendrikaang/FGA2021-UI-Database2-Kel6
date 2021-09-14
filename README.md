@@ -320,10 +320,163 @@ CREATE TABLE r_DISCOUNT_HISTORIES (
 ```
 
 ### 3. Create Views
+View dapat digunakan untuk memudahkan pengguna yang bukan seorang DBA dalam menggunakan query. Berikut adalah syntax penggunaan views.
+```sql
+CREATE [OR REPLACE] [FORCE|NOFORCE] VIEW view_name [(alias[,alias...])] AS subquery
+[WITH CHECK OPTION [CONSTRAINT constraint]]
+[WITH READ ONLY [CONSTRAINT constraint]]
+```
+
+Berikut adalah salah satu contoh penggunaan view. View di bawah ini digunakan untuk menampilkan nama toko, daftar produk, stok, tanggal kedaluarsa, dan supplier produk-produk yang stoknya tinggal sedikit atau produk yang akan segera kedaluarsa.
+![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+```sql
+CREATE OR REPLACE VIEW view_warehouse_problem
+	AS SELECT s.store_name AS "Toko", 
+  p.product_name AS "Produk", 
+  p.stock AS "Stok", 
+  p.expire_date AS "Kedaluarsa", 
+  s.supplier_name AS "Supplier"
+FROM r_products p, r_stores s, r_suppliers s, r_supplies supply
+WHERE 
+	p.store_id = s.store_id AND
+	p.product_id = supply.product_id AND
+	supply.supplier_id = s.supplier_id AND 
+	(p.expire_date >= (SYSDATE + 30) OR p.stock <= 1000);
+```
 
 ### 4. Create Sequences
+Sequence biasa digunakan untuk membuat penomoran otomatis. Berikut adalah syntax pembuatan sequence.
+```sql
+CREATE SEQUENCE sequence_name
+[INCREMENT BY n]
+[START WITH n]
+[MAXVALUE n | NOMAXVALUE]
+[MINVALUE n | NOMINVALUE]
+[CYCLE | NOCYCLE]
+[CACHE | NOCACHE]
+```
+Di dalam project ini, sequence digunakan untuk membantu memberi id untuk tabel r_transactions, r_customers, r_employees, r_stores, r_suppliers. Berikut adalah kode yang digunakan.
+```sql
+CREATE SEQUENCE transaction_id_seq
+INCREMENT BY 1
+START WITH 1
+NOMAXVALUE
+NOCYCLE;
+CREATE SEQUENCE people_id_seq;
+CREATE SEQUENCE store_id_seq;
+CREATE SEQUENCE supplier_id_sed;
+```
 
 ### 5. Add Data to Tables
+Untuk menambahkan data ke dalam tabel, digunakan perintah INSERT. Insert memiliki syntax yang cukup mudah untuk memasukkan data satu-persatu. Untuk memasukkan data beberapa baris sekaligus, syntaxnya sedikit berbeda. Berikut adalah syntax insert untuk menambahkan 1 baris data.
+```sql
+INSERT INTO table_name
+	(column_name_1, column_name_2,...)
+VALUES
+	(value_column_1, value_column_2,...);
+```
+Ada banyak data contoh yang kami masukkan, cara menginputnnya pun juga beragam:
+#### Cara 1
+Caranya yaitu hanya menyertakan konten barisnya tanpa menuliskan kolom-kolomnya. Cara yang pertama ini cukup tidak direkomendasikan karena kita harus tahu betul bagaimana database disimpan di dalam sistem. Kita harus tahu pasti bagaimana urutannya dan ketentuan-ketentuannya.
+```sql
+INSERT INTO r_stores
+VALUES
+	(sre_seq.NEXTVAL, 085282731008, 'Stasiun Depok', 'GGS, Jl. St. Depok Lama, Depok', 092542943407000, 16431);
+
+INSERT INTO r_salary_histories
+VALUES
+	('01-Aug-2021', '31-Jul-2023', 2100000, NULL, 'big boss', 1);
+```
+#### Cara 2
+Caranya mirip dengan cara 1 namun dengan menuliskan kolom-kolomnya. Cara ini lebih direkomendasikan untuk memasukkan data satu-persatu ke dalam sistem. Juga dengan cara ini, kita bisa menggunakan sequence di dalamnya.
+```sql
+-- Memasukkan data employee
+INSERT INTO r_employees
+	(employee_id, nik, phone_number, employee_name, address, email, bank_account, postal_code, store_id)
+VALUES
+	(ppe_seq.NEXTVAL, 6273140804002001, 085246821145, 'Budi Susilawati', 'Jl. Raya Pajajaran No.102, RT.03/RW.12, Bantarjati', 'bs@gmail.com', 114359842555732, 16153, 1);
+
+-- Memasukkan data customer
+INSERT INTO r_customers (customer_id, nik, phone_number, customer_name, address, email, point, postal_code)
+VALUES (ppe_seq.NEXTVAL, 3173050501000007, 085200827199,' Tania Karantina', 'Jl. Pitara No.96, RW.15, Pancoran MAS', 'takar@gmail.com', 0, 16436);
+INSERT INTO r_customers (customer_id, nik, phone_number, customer_name, address, email, point, postal_code)
+VALUES (ppe_seq.NEXTVAL, 3263131101998003, 081358923850, 'Salma Covidah', 'Jl. Matraman, Ratu Jaya', 'salma_cov@gmail.com', 0, 16439);
+INSERT INTO r_customers (customer_id, nik, phone_number, customer_name, address, email, point, postal_code)
+VALUES (ppe_seq.NEXTVAL, 6273140804002001, 087365900932, 'Maskur Yudhistira', 'Ruko Verbena D-16, Jl. Boulevard Grand Depok City, Tirtajaya', 'mas_yudhi@gmail.com', 103, 16412);
+
+-- Memasukkan data supplier
+INSERT INTO r_suppliers
+	(supplier_id, phone_number, supplier_name, email, address, postal_code)
+VALUES
+	(spr_seq.NEXTVAL, 085246821145, 'Budi Susilawati', 'bs@gmail.com', 'Jl. Raya Pajajaran No.102, RT.03/RW.12, Bantarjati', 16153);
+
+-- Memasukkan data histori diskon
+INSERT INTO r_discount_histories
+	(start_date_discount, end_date_discount, percentage, product_id)
+VALUES
+	('20-Sep-2021', '21-Sep-2021', 20, 8998009010590);
+
+-- Memasukkan data supplies
+INSERT INTO r_supplies
+	(supply_date, supplier_id, product_id, quantity)
+VALUES
+	('20-Sep-2021', 1, 8998009010590, 240);
+
+-- Memasukkan data transaksi
+INSERT INTO r_transactions (transaction_id, transaction_date, payment_type, total_transaction, customer_id, employee_id)
+VALUES (trx_seq.NEXTVAL, TO_DATE('07-Sep-2021', 'dd-Mon-yyyy'), 'cash', 58500, 2, 1);
+INSERT INTO r_transactions (transaction_id, transaction_date, payment_type, total_transaction, customer_id, employee_id)
+VALUES (trx_seq.NEXTVAL, TO_DATE('07-Sep-2021', 'dd-Mon-yyyy'), 'cash', 79800, 4, 1);
+INSERT INTO r_transactions (transaction_id, transaction_date, payment_type, total_transaction, customer_id, employee_id)
+VALUES (trx_seq.NEXTVAL, TO_DATE('14-Sep-2021', 'dd-Mon-yyyy'), 'cash', 460000, 3, 1);
+INSERT INTO r_transactions (transaction_id, transaction_date, payment_type, total_transaction, customer_id, employee_id)
+VALUES (trx_seq.NEXTVAL, TO_DATE('14-Sep-2021', 'dd-Mon-yyyy'), 'cash', 120000, 2, 1);
+```
+#### Cara 3
+Cara ini digunakan untuk memasukkan *multirow data* sehingga kita bisa memasukkan beberapa baris data sekaligus. Caranya dengan menggunakan bantuan tabel DUAL. Apabila kita mau menggunakan cara ini, kita jadi tidak bisa menggunakan sequence.
+```sql
+INSERT INTO r_locations (postal_code, district, regency, province)
+	WITH location AS ( 
+		SELECT 16436, 'Pancoran Mas', 'Kota Depok', 'Jawa Barat' FROM dual UNION ALL 
+		SELECT 16439, 'Cipayung', 'Kota Depok', 'Jawa Barat' FROM dual UNION ALL 
+		SELECT 16412, 'Sukmajaya', 'Kota Depok', 'Jawa Barat' FROM dual UNION ALL 
+		SELECT 16431, 'Pancoran Mas', 'Kota Depok', 'Jawa Barat' FROM dual UNION ALL
+		SELECT 16153, 'Bogor Utara', 'Kota Bogor', 'Jawa Barat' FROM dual
+    ) 
+	SELECT * FROM location;
+
+INSERT INTO r_products
+	(product_id, product_name, price, stock, expire_date, store_id)
+	WITH product AS (
+		SELECT 8997019580772, 't-soft tissue 200', 3400, 500, TO_DATE('21-07-2024', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 4902430403856, 'oral-b soft 3', 12500, 100, TO_DATE('19-11-2026', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8997213160114, 'beleaf soap 90gr', 8400, 96, TO_DATE('22-06-2023', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8996001305126, 'arden cookies 300gr', 16000, 240, TO_DATE('06-03-2022', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8998866500388, 'teh rio 180ml', 1000, 1000, TO_DATE('02-11-2021', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8991102222006, 'teh gelas 160ml', 1000, 1200, TO_DATE('06-08-2022', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 6971174324619, 'alkindo mask 50', 21000, 85, TO_DATE('30-12-2024', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8999809700032, 'vicee vit c 500gr', 2500, 240, TO_DATE('01-07-2023', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8998009010590, 'ultramilk coklat 125ml', 3500, 120, TO_DATE('17-11-2020', 'dd-mm-yyyy'), 1 FROM dual UNION ALL
+		SELECT 8993175549820, 'nabati raspberry yoghurt 132gr', 6000, 120, TO_DATE('09-07-2022', 'dd-mm-yyyy'), 1 FROM dual
+	)
+	SELECT * FROM product;
+
+INSERT INTO r_items
+	(transaction_id, product_id, quantity)
+	WITH items AS (
+		SELECT 1, 8997019580772, 10 FROM dual UNION ALL
+		SELECT 1, 4902430403856, 1 FROM dual UNION ALL
+		SELECT 1, 8993175549820, 2 FROM dual UNION ALL
+		SELECT 2, 8997213160114, 2 FROM dual UNION ALL
+		SELECT 2, 6971174324619, 3 FROM dual UNION ALL
+		SELECT 3, 8999809700032, 24 FROM dual UNION ALL
+		SELECT 3, 6971174324619, 5 FROM dual UNION ALL
+		SELECT 3, 8998009010590, 50 FROM dual UNION ALL
+		SELECT 3, 8998866500388, 120 FROM dual UNION ALL
+		SELECT 4, 8993175549820, 20 FROM dual
+	)
+	SELECT * FROM items;
+```
 
 ### 6. Create Indexes
 
