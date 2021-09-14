@@ -479,7 +479,32 @@ INSERT INTO r_items
 ```
 
 ### 6. Create Indexes
+Pada database, index merupakan sebuah struktur data yang berisi kumpulan keys beserta referensinya ke actual data di table. Tujuannya untuk memepercepat proses penentuan lokasi data tanpa melakukan pencarian secara penuh pada keseluruh data (full scan). Format penulisan kueri untuk index adalah sebagai berikut:
+```sql
+CREATE INDEX nama_index ON nama_tabel(nama_field1,nama_field2,…);
+```
+Pada tabel discount_history yang telah dibuat, akan ditambahkan index dengan kueri sebagai berikut:
+```sql
+CREATE INDEX discount_idx ON r_discount_histories(start_date_discount,end_date_discount);
+```
 
 ### 7. Create Synonyms
+Synonim adalah obyek-obyek database yang memungkinkan untuk memanggil suatu tabel dengan nama lain. Create synonym berguna untuk menganti atau menyingkat nama yang sulit diingat dari sebuah objek. User dapat mengakses data pada tabel yang berisis informasi yang sensitif dan privat melalui synonym tanpa harus mengetahui nama tabel aslinya.
+Format penulisan kueri untuk synonim adalah sebagai berikut:
+```sql
+CREATE [OR REPLACE] [PUBLIC] SYNONYM  nama_synonim FOR  nama_schema.object;
+```
+Pada database yang telah dibuat, akan ditambahkan synonym dengan kueri sebagai berikut:
+```sql
+CREATE SYNONYM  trx_seq FOR  transaction_id_seq;
+CREATE SYNONYM  ppe_seq FOR people_id_seq;
+CREATE SYNONYM  sre_seq FOR store_id_seq;
+CREATE SYNONYM  spr_seq FOR supplier_id_sed;
+```
 
 ### 8. Test Database
+Test Num | Date | Test Description | Input | Expected Output | Result
+-------- | ---- | ---------------- | ----- | --------------- | ------
+1 | 12/09/2021 | Confirm NOT NULL constraint on postal_code in r_locations | INSERT INTO r_locations (postal_code, district, regency, province) VALUES (NULL, 'Bogor Utara', 'Kota Bogor', 'Jawa Barat'); | Cannot insert NULL | ORA-01400: cannot insert NULL into ("ID_A848_SQL_S02"."R_LOCATIONS"."POSTAL_CODE
+2 | 12/09/2021 | Confirm PRIMARY KEY constraint on EMPLOYEE_ID in EMPLOYEES table where data value  must be unique and not null | INSERT INTO EMPLOYEES (EMPLOYEE_id) VALUES(NULL) \n INSERT INTO EMPLOYEES(EMPLOYEE_id) VALUES(‘JB01’) | Cannot insert NULL and non-uniqe value | ORA-01400: cannot insert NULL into ("ID_A848_SQL_S02"."EMPLOYEES"."EMPLOYEE_ID") \n ORA-00001:     	unique constraint (ID_A848_SQL_S02.EMPLOYEE_ID_PK) violated
+
